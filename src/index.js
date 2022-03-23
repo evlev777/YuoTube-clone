@@ -1,10 +1,11 @@
 import {searchVideos} from './searchVideo';
 import {api_key,video_http,channel_http} from './savedHistory'
-import {saveData} from './data.js'
+import {saveData} from './data.js';
 import './style.css';
 
 
 const videoCardContainer = document.querySelector('.video-container');
+
 
 fetch(video_http + new URLSearchParams({
     key: api_key,
@@ -49,6 +50,8 @@ const makeVideoCard = (data) => {
     </div>
     `;
 }
+
+
 
 // search bar
 
