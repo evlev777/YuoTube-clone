@@ -1,20 +1,18 @@
-import {searchVideos} from './searchVideo';
-import {api_key,video_http,channel_http} from './savedHistory'
-import {saveData} from './data.js';
-import './style.css';
+
+import { api_key, video_http, channel_http } from "./savedHistory";
 
 
-const videoCardContainer = document.querySelector('.video-container');
+const videoCardContainerNavigation = document.querySelector('.navigation .video-container');
 
 fetch(video_http + new URLSearchParams({
     key: api_key,
-    part:[
+    part: [
         'snippet',
         'statistics'
-    ] ,
+    ],
     chart: 'mostPopular',
     maxResults: 50,
-    regionCode: 'BY'
+    regionCode: 'IN'
 }))
 .then(res => res.json())
 .then(data => {
@@ -28,18 +26,21 @@ fetch(video_http + new URLSearchParams({
 const getChannelIcon = (video_data) => {
     fetch(channel_http + new URLSearchParams({
         key: api_key,
-        part: 'snippet',
+        part: [
+            'snippet',
+            'statistics'
+        ],
         id: video_data.snippet.channelId
     }))
     .then(res => res.json())
     .then(data => {
         video_data.channelThumbnail = data.items[0].snippet.thumbnails.default.url;
-        makeVideoCard(video_data);
+        makeVideoCardNavigation(video_data);
     })
 }
 
-const makeVideoCard = (data) => {
-    videoCardContainer.innerHTML += `
+const makeVideoCardNavigation = (data) => {
+    videoCardContainerNavigation.innerHTML += `
     <div class="video" onclick="location.href = 'https://youtube.com/watch?v=${data.id}'">
         <img src="${data.snippet.thumbnails.high.url}" class="thumbnail" alt="">
         <div class="content">
@@ -51,53 +52,10 @@ const makeVideoCard = (data) => {
         </div>
     </div>
     `;
+
+    videoCardContainerNavigation.querySelectorAll('video').sort((a,b) =>{
+        return a.statistics.viewCount - b.statistics.viewCount;
+    })
 }
-
-
-
-// search bar
-
-
-const searchBtn = document.querySelector('.search-btn');
-
-
-searchBtn.addEventListener('click', () => {
-    searchVideos()
-})
-
-
-//show/close navbar
-
-
-const toggleBtn = document.querySelector('.toggle-btn');
-const bar = document.querySelector('.side-bar')
-
-toggleBtn.addEventListener('click',() =>{
-    bar.classList.toggle('hidden');
-})
-
-//saved history 
-
-
-videoCardContainer.addEventListener('click', (e) =>{
-    if(e.target.classList.contain('video')){
-        saveData.unsshift(e.target);
-    }
-
-})
-
-
-//upload content in a page
-
-
-//active button
-
-bar.addEventListener('click',(e) =>{
-    e.target.classList.toggle('active');
-    
-})
-
-
-export {getChannelIcon,makeVideoCard,}
 
 
